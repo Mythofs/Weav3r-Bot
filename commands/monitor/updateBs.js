@@ -25,6 +25,6 @@ module.exports = {
             channel.send(`Error from ${url}: ${JSON.stringify(data)}`);
             throw new Error("Error from https://api.torn.com/v2/user/battlestats");
         }
-        bstotal = data.battlestats.total * (4 + data.battlestats.strength.modifier + data.battlestats.strength.modifier + data.battlestats.defense.modifier + data.battlestats.speed.modifier + data.battlestats.dexterity.modifier)/4
+        bsTotal = data.battlestats.total * (4 + data.battlestats.strength.modifier * 0.01 + data.battlestats.defense.modifier * 0.01 + data.battlestats.speed.modifier * 0.01 + data.battlestats.dexterity.modifier * 0.01)/4;
     },
 };
