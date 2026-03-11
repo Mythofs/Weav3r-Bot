@@ -3,6 +3,7 @@ const { apiKey,ffscouterKey,channelId } = require('../../config.json');
 const monitor = require('../../monitorStore.js');
 const idCache = require('../../idCache.js');
 const bstotal = require('../../bstotal.js');
+const apiTotal = require('../../apiInfo.js');
 
 module.exports = {
     data: new SlashCommandBuilder().setName('monitor').setDescription('Monitor an item.')
@@ -72,7 +73,10 @@ module.exports = {
                             }
                         }
                     }
-                    console.log(itemId + ": " + profileId.size);
+                    if(apiInfo.has(itemId))
+                        apiInfo.get(itemId) = stats.length;
+                    else
+                        apiInfo.set(itemId, stats.length);
                 }
                 catch(error) {
                     console.error(error);

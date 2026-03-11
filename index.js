@@ -1,7 +1,8 @@
 const { Client, Collection, Events, GatewayIntentBits, MessageFlags } = require('discord.js');
-const { token } = require('./config.json');
+const { token, apiKey } = require('./config.json');
 const fs = require('node:fs');
 const path = require('node:path');
+const itemId = require('./itemId.js');
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
@@ -35,5 +36,14 @@ for(const file of eventFiles) {
         client.on(event.name, (...args) => event.execute(...args));
     }
 }
+setUp().then(() => client.login(token));
 
-client.login(token);
+async function setUp()
+{
+    const response = await fetch(`https://api.torn.com/torn/?selections=items&key=${apiKey}`);
+    const data = await response.json();
+    for(const [id, item] of Object.entries(data.items)) {
+        itemId.set(id, item.name);
+        console.log(itemId.get(id));
+    }
+}
