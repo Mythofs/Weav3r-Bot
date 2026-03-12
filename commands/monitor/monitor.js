@@ -3,7 +3,8 @@ const { apiKey,ffscouterKey,channelId } = require('../../config.json');
 const monitor = require('../../monitorStore.js');
 const idCache = require('../../idCache.js');
 const bstotal = require('../../bstotal.js');
-const apiTotal = require('../../apiInfo.js');
+const apiInfo = require('../../apiInfo.js');
+const priceMin = require('../../priceMin.js');
 
 module.exports = {
     data: new SlashCommandBuilder().setName('monitor').setDescription('Monitor an item.')
@@ -11,7 +12,6 @@ module.exports = {
     async execute(interaction) {
         const channel = interaction.client.channels.cache.get(channelId);
         const itemId = interaction.options.getString('itemid', true);
-        const priceLimit = 1500000;
         if(monitor.has(itemId))
             return interaction.reply(`Already monitering item ${itemId}`);
         let interval;
@@ -24,7 +24,7 @@ module.exports = {
                     for(const listing of listings) {
                         if(listing.price * 0.95 > data.bazaar_average)
                             break;
-                        if((listing.price - data.bazaar_average) * listing.quantity * 0.1 > priceLimit)
+                        if((listing.price - data.bazaar_average) * listing.quantity * 0.1 > priceMin)
                             profileId.add(listing.player_id);
                     }
                     for(const key of idCache.keys())
