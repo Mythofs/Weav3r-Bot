@@ -3,6 +3,7 @@ const { token, apiKey } = require('./config.json');
 const fs = require('node:fs');
 const path = require('node:path');
 const itemId = require('./itemId.js');
+const priceMin = require('./priceMin.js');
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
@@ -42,8 +43,7 @@ async function setUp()
 {
     const response = await fetch(`https://api.torn.com/torn/?selections=items&key=${apiKey}`);
     const data = await response.json();
-    for(const [id, item] of Object.entries(data.items)) {
+    for(const [id, item] of Object.entries(data.items))
         itemId.set(id, item.name);
-        console.log(itemId.get(id));
-    }
+    priceMin = 1500000;
 }
