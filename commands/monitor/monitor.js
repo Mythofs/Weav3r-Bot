@@ -73,10 +73,7 @@ module.exports = {
                             }
                         }
                     }
-                    if(apiInfo.has(itemId))
-                        apiInfo.get(itemId) = stats.length;
-                    else
-                        apiInfo.set(itemId, stats.length);
+                    apiInfo.set(itemId, stats.length);
                 }
                 catch(error) {
                     console.error(error);

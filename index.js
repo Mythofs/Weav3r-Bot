@@ -3,7 +3,7 @@ const { token, apiKey } = require('./config.json');
 const fs = require('node:fs');
 const path = require('node:path');
 const itemId = require('./itemId.js');
-const priceMin = require('./priceMin.js');
+let priceMin = require('./priceMin.js');
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 

@@ -1,9 +1,9 @@
 const { SlashCommandBuilder } = require('discord.js');
-const apiKey = require('../../config.js');
+const apiKey = require('../../config.json');
 const bsTotal = require('../../bstotal.js');
 
 module.exports = { 
-    data: new SlashCommandBuilder().setName('setBS').setDescription('Updates your battlestats'), 
+    data: new SlashCommandBuilder().setName('setbs').setDescription('Updates your battlestats'), 
     async execute(interaction) {
         let response;
         try {

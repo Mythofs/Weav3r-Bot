@@ -10,10 +10,16 @@ module.exports = {
         }
         delete require.cache[require.resolve(`./${command.data.name}.js`)];
 
+        const fs = require('fs');
+        const path = require('path');
+        const files = fs.readdirSync(__dirname).filter(file => file.endsWith('.js'));
+
         try {
-            const newCommand = require(`./${command.data.name}.js`);
-            interaction.client.commands.set(newCommand.data.name, newCommand);
-            await interaction.reply(`Command \`${newCommand.data.name}\` was reloaded!`);
+            for(const file of files) {
+                const newCommand = require(path.join(__dirname, file));
+                interaction.client.commands.set(newCommand.data.name, newCommand);
+                await interaction.reply(`Command \`${newCommand.data.name}\` was reloaded!`);
+            }
         }
         catch(error) {
             console.error(error);
