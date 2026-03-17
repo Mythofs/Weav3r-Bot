@@ -36,8 +36,10 @@ module.exports = {
                     if(profileId.size == 0)
                         return;
                     const stats = await safeFetch(`https://ffscouter.com/api/v1/get-stats?key=${ffscouterKey}&targets=${Array.from(profileId).join()}`, channel);
+                    let calls = 0;
+                    console.log(listings);
+                    console.log(stats);
                     for(const stat of stats) {
-                        const calls = 0;
                         if(stat.bs_estimate < bstotal.value * 0.75) {
                             calls++;
                             const userInfo = await safeFetch(`https://api.torn.com/user/${stat.player_id}?selections=icons,bazaar,profile&key=${apiKey}`, channel);
