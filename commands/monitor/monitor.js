@@ -27,7 +27,7 @@ module.exports = {
                     for(const listing of listings) {
                         if(listing.price * 0.95 > data.bazaar_average)
                             break;
-                        if((listing.price - data.bazaar_average) * listing.quantity * 0.1 > priceMin.value)
+                        if((data.bazaar_average - listing.price * 0.9) * listing.quantity > priceMin.value)
                             profileId.add(listing.player_id);
                     }
                     for(const key of idCache.keys())
