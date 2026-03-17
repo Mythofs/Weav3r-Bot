@@ -1,4 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
+const fs = require('fs');
+const path = require('path');
 
 module.exports = {
     data: new SlashCommandBuilder().setName('reload').setDescription('Reloads a command.').addStringOption((option) => option.setName('command').setDescription('The command to reload.').setRequired(true)),
@@ -8,22 +10,31 @@ module.exports = {
         if(!command) {
             return interaction.reply(`There is no command with name \`${commandName}\`!`);
         }
-        delete require.cache[require.resolve(`./${command.data.name}.js`)];
 
-        const fs = require('fs');
-        const path = require('path');
-        const files = fs.readdirSync(__dirname).filter(file => file.endsWith('.js'));
-
-        try {
-            for(const file of files) {
-                const newCommand = require(path.join(__dirname, file));
-                interaction.client.commands.set(newCommand.data.name, newCommand);
-                await interaction.reply(`Command \`${newCommand.data.name}\` was reloaded!`);
+        const commandsBasePath = path.join(__dirname, '..');
+        const folders = fs.readdirSync(commandsBasePath, { withFileTypes: true })
+            .filter(dirent => dirent.isDirectory())
+            .map(dirent => dirent.name);
+        let commandPath = null;
+        for (const folder of folders) {
+            const filePath = path.join(commandsBasePath, folder, `${commandName}.js`);
+            if (fs.existsSync(filePath)) {
+                commandPath = filePath;
+                break;
             }
         }
-        catch(error) {
+        if (!commandPath)
+            return interaction.reply(`Could not find the file for command \`${commandName}\`!`);
+
+        delete require.cache[require.resolve(commandPath)];
+        try {
+            const newCommand = require(commandPath);
+            interaction.client.commands.set(newCommand.data.name, newCommand);
+            return interaction.reply(`Command \`${commandName}\` was reloaded!`);
+        }
+        catch (error) {
             console.error(error);
-            await interaction.reply(`There was an error while reloading a command \` ${command.data.name}\`:\n\`${error.message}\``,);
+            return interaction.reply(`There was an error while reloading \`${commandName}\`:\n\`${error.message}\``);
         }
     }
 }

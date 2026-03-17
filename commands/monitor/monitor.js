@@ -39,6 +39,7 @@ module.exports = {
                     for(const stat of stats) {
                         if(stat.bs_estimate < bstotal * 0.75) {
                             const userInfo = await safeFetch(`https://api.torn.com/user/${stat.player_id}?selections=icons,bazaar,profile&key=${apiKey}`, channel);
+                            console.log(userInfo);
                             const iconMap = new Map(userInfo.icons.map(icon => [icon.id, icon.description]));
                             //72 - greenleaf, 71 - traveling, 15 - hostpital, 35 - bazaar, 27 - company
                             if(!iconMap.has(72) && !iconMap.has(71) && !iconMap.has(15) && iconMap.has(35) && (!iconMap.has(27) || !iconMap.get(27).includes("Clothing Store")) && !(idCache.has(stat.player_id) && idCache.get(stat.player_id).has(itemId))) {
