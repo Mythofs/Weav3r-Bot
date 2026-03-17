@@ -42,12 +42,11 @@ module.exports = {
                     let calls = 0;
                     for(const stat of stats) {
                         if(stat.bs_estimate < bstotal.value * 0.75) {
-                            console.log(stat);
                             calls++;
                             const userInfo = await safeFetch(`https://api.torn.com/user/${stat.player_id}?selections=icons,bazaar,profile&key=${apiKey}`, channel);
-                            const iconMap = new Map(userInfo.icons.map(icon => [icon.id, icon.description]));
+                            const icons = userInfo.icons;
                             //72 - greenleaf, 71 - traveling, 15 - hostpital, 35 - bazaar, 27 - company
-                            if(!iconMap.has(72) && !iconMap.has(71) && !iconMap.has(15) && iconMap.has(35) && (!iconMap.has(27) || !iconMap.get(27).includes("Clothing Store")) && !(idCache.has(stat.player_id) && idCache.get(stat.player_id).has(itemId))) {
+                            if(!("icon72" in icons) && !("icon71" in icons) && !("icon15" in icons) && "icon35" in icons && (!("icon27" in icons) || !icons["icon27"].includes("Clothing Store")) && !(idCache.has(stat.player_id) && idCache.get(stat.player_id).has(itemId))) {
                                 const listing = listings.find(l => l.player_id == stat.player_id);
                                 if(userInfo.last_action.status != "Online") {
                                     channel.send({
@@ -61,20 +60,20 @@ module.exports = {
                                             { name: 'Item', value: data.item_name, inline: true },
                                             { name: 'Price', value: '$' + listing.price.toLocaleString(), inline: true },
                                             { name: 'Total Value', value: '$' + (listing.price * listing.quantity).toLocaleString(), inline: true },
-                                            { name: 'Name', value: `${userInfo.name} (${userInfo.id})`, inline: true},
+                                            { name: 'Name', value: `${userInfo.name} (${userInfo.player_id})`, inline: true},
                                             { name: 'Level', value: String(userInfo.level), inline: true},
                                             { name: 'Last Action', value: userInfo.last_action.status + " (" + userInfo.last_action.relative + ")", inline: true},
                                             { name: 'Estimated Stats', value: stat.bs_estimate_human ?? 'Unknown', inline: true },
-                                            { name: 'Bazaar Link', value: `[Bazaar](https://www.torn.com/bazaar.php?userId=${userInfo.id}#/)` },
-                                            { name: 'Profile Link', value: `[Profile](https://www.torn.com/profiles.php?XID=${userInfo.id})` },
-                                            { name: 'Attack Link', value: `[Attack](https://www.torn.com/loader.php?sid=attack&user2ID=${userInfo.id})` },
+                                            { name: 'Bazaar Link', value: `[Bazaar](https://www.torn.com/bazaar.php?userId=${userInfo.player_id}#/)` },
+                                            { name: 'Profile Link', value: `[Profile](https://www.torn.com/profiles.php?XID=${userInfo.player_id})` },
+                                            { name: 'Attack Link', value: `[Attack](https://www.torn.com/loader.php?sid=attack&user2ID=${userInfo.player_id})` },
                                         )
                                         .setTimestamp()
                                     ]});
-                                    if(idCache.has(userInfo.id))
-                                        idCache.get(userInfo.id).add(itemId);
+                                    if(idCache.has(userInfo.player_id))
+                                        idCache.get(userInfo.player_id).add(itemId);
                                     else
-                                        idCache.set(userInfo.id, new Set([itemId]));
+                                        idCache.set(userInfo.player_id, new Set([itemId]));
                                 }
                             }
                         }
