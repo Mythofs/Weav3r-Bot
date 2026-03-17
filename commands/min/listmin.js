@@ -5,8 +5,8 @@ module.exports = {
     data: new SlashCommandBuilder().setName('listmin').setDescription('List minimum mug amount'),
     async execute(interaction) {
         try {
-            await interaction.reply(min);
+            await interaction.reply(String(min.value));
         }
-        catch(error) { await interaction.reply(`Error occurred when listing bs ${error.message}`); }
+        catch(error) { await interaction.reply(`Error occurred when listing min ${error.message}`); }
     }
 }

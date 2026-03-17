@@ -3,7 +3,8 @@ const { token, apiKey } = require('./config.json');
 const fs = require('node:fs');
 const path = require('node:path');
 const itemId = require('./itemId.js');
-let priceMin = require('./priceMin.js');
+const priceMin = require('./priceMin.js');
+const bstotal = require('./bstotal.js');
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
@@ -41,9 +42,12 @@ setUp().then(() => client.login(token));
 
 async function setUp()
 {
-    const response = await fetch(`https://api.torn.com/torn/?selections=items&key=${apiKey}`);
+    let response = await fetch(`https://api.torn.com/torn/?selections=items&key=${apiKey}`);
     const data = await response.json();
+    response = await fetch(`https://api.torn.com/v2/user/battlestats?comment=Weav3r%20Mug%20Bot&key=${apiKey}`);
+    const bs = await response.json();
+    bstotal.value = bs.battlestats.strength.value * (1 + bs.battlestats.strength.modifier * 0.01) + bs.battlestats.defense.value * (1 + bs.battlestats.defense.modifier * 0.01) + bs.battlestats.speed.value * (1 + bs.battlestats.speed.modifier * 0.01) + bs.battlestats.dexterity.value * (1 + bs.battlestats.dexterity.modifier * 0.01);
     for(const [id, item] of Object.entries(data.items))
         itemId.set(id, item.name);
-    priceMin = 1500000;
+    priceMin.value = 1500000;
 }

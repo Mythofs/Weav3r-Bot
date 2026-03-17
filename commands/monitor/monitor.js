@@ -24,7 +24,7 @@ module.exports = {
                     for(const listing of listings) {
                         if(listing.price * 0.95 > data.bazaar_average)
                             break;
-                        if((listing.price - data.bazaar_average) * listing.quantity * 0.1 > priceMin)
+                        if((listing.price - data.bazaar_average) * listing.quantity * 0.1 > priceMin.value)
                             profileId.add(listing.player_id);
                     }
                     for(const key of idCache.keys())
@@ -38,7 +38,7 @@ module.exports = {
                     const stats = await safeFetch(`https://ffscouter.com/api/v1/get-stats?key=${ffscouterKey}&targets=${Array.from(profileId).join()}`, channel);
                     for(const stat of stats) {
                         const calls = 0;
-                        if(stat.bs_estimate < bstotal * 0.75) {
+                        if(stat.bs_estimate < bstotal.value * 0.75) {
                             calls++;
                             const userInfo = await safeFetch(`https://api.torn.com/user/${stat.player_id}?selections=icons,bazaar,profile&key=${apiKey}`, channel);
                             const iconMap = new Map(userInfo.icons.map(icon => [icon.id, icon.description]));
