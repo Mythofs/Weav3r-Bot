@@ -5,6 +5,7 @@ const idCache = require('../../idCache.js');
 const bstotal = require('../../bstotal.js');
 const apiInfo = require('../../apiInfo.js');
 const priceMin = require('../../priceMin.js');
+const items = require('../../itemId.js');
 
 module.exports = {
     data: new SlashCommandBuilder().setName('monitor').setDescription('Monitor an item.')
@@ -14,6 +15,8 @@ module.exports = {
         const itemId = interaction.options.getString('itemid', true);
         if(monitor.has(itemId))
             return interaction.reply(`Already monitering item ${itemId}`);
+        if(!items.has(itemId))
+            return interaction.reply(`No such item: ${itemId}`);
         let interval;
         try {
             interval = setInterval(async () => {
@@ -37,10 +40,9 @@ module.exports = {
                         return;
                     const stats = await safeFetch(`https://ffscouter.com/api/v1/get-stats?key=${ffscouterKey}&targets=${Array.from(profileId).join()}`, channel);
                     let calls = 0;
-                    console.log(listings);
-                    console.log(stats);
                     for(const stat of stats) {
                         if(stat.bs_estimate < bstotal.value * 0.75) {
+                            console.log(stat);
                             calls++;
                             const userInfo = await safeFetch(`https://api.torn.com/user/${stat.player_id}?selections=icons,bazaar,profile&key=${apiKey}`, channel);
                             const iconMap = new Map(userInfo.icons.map(icon => [icon.id, icon.description]));
